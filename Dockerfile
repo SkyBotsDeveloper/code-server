@@ -1,14 +1,23 @@
 FROM codercom/code-server:latest
 
-ENV PASSWORD=vivaan123
+# Already includes: Node.js, npm, git, curl, Python 3
 
-RUN apt-get update && apt-get install -y \
-    python3 python3-pip \
-    nodejs npm \
-    git curl \
-    && rm -rf /var/lib/apt/lists/*
+USER root
 
-RUN pip3 install pyrogram requests beautifulsoup4
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3-pip \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir \
+    pyrogram \
+    requests \
+    beautifulsoup4 \
+    python-telegram-bot
+
+USER coder
 
 EXPOSE 8080
-CMD ["code-server", "--bind-addr", "0.0.0.0:8080"]
+
+ENTRYPOINT ["code-server", "--bind-addr", "0.0.0.0:8080"]
